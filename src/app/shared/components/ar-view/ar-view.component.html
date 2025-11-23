@@ -1,0 +1,9 @@
+<div class="ar-container">
+  <ng-container *ngIf="loading">
+    <ion-spinner name="dots"></ion-spinner>
+  </ng-container>
+
+  <ng-container *ngIf="!loading && iframeSrc">
+    <iframe class="ar-frame" [src]="iframeSrc" allow="camera; microphone" title="AR View"></iframe>
+  </ng-container>
+</div>
