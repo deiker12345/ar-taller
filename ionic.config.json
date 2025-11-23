@@ -1,0 +1,7 @@
+{
+  "name": "ar-taller",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
