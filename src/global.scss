@@ -1,37 +1,116 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --space: 20px;
+  --shadow-soft: 0 12px 24px rgba(0,0,0,0.18);
+}
+
+body {
+  font-family: var(--ion-font-family);
+  color: var(--text-primary);
+  background: var(--app-background);
+}
+
+ion-toolbar {
+  --background: var(--surface);
+  --color: var(--text-primary);
+  --border-color: var(--border-color);
+  --border-style: solid;
+  --border-width: 0 0 1px 0;
+}
+
+.page-background {
+  --background: var(--app-background);
+}
+
+.centered-container {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--space);
+}
+
+.card {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-color);
+}
+
+.card-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  backdrop-filter: blur(12px);
+}
+
+.primary-button {
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  height: 52px;
+}
+
+.form-item {
+  --background: var(--surface);
+  --border-radius: var(--radius-md);
+  --inner-padding-end: 8px;
+}
+
+.muted-text {
+  color: var(--text-secondary);
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-blue-violet { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); }
+.gradient-cyan-morado { background: linear-gradient(135deg, #06B6D4 0%, #A855F7 100%); }
+.gradient-menta-azul { background: linear-gradient(135deg, #10B981 0%, #67E8F9 100%); }
+.gradient-azul-cian { background: linear-gradient(135deg, #3B82F6 0%, #22D3EE 100%); }
+
+.feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-grid;
+  place-items: center;
+  color: #FFFFFF;
+}
+
+.hero {
+  padding: var(--space);
+}
+.hero-title {
+  font-weight: 700;
+  font-size: 28px;
+}
+.hero-subtitle {
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.ar-note {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-radius: var(--radius-md);
+  margin: 12px;
+}
+
+ion-card.elevated-card { box-shadow: var(--shadow-soft); border-radius: var(--radius-md); }
+ion-fab-button { border-radius: var(--radius-md); }

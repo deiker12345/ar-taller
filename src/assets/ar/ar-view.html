@@ -6,14 +6,29 @@
   <title>AR View</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-aframe.prod.js"></script>
   <style>
     html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
     a-scene { width: 100%; height: 100%; }
+    #message { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.6); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 12px; z-index: 20; }
   </style>
 </head>
 <body>
+  <div id="toggle" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10;">
+    <button id="toggleCamera" aria-label="Cambiar cámara" title="Cambiar cámara"
+      style="width:60px;height:60px;border-radius:50%;border:0;background:#111;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 0 1 14-7"/>
+        <polyline points="16 5 17.5 3.5 19 5"/>
+        <path d="M21 12a9 9 0 0 1-14 7"/>
+        <polyline points="8 19 6.5 20.5 5 19"/>
+        <rect x="7" y="8" width="10" height="8" rx="2" ry="2"/>
+        <circle cx="12" cy="12" r="2"/>
+      </svg>
+    </button>
+  </div>
+  <div id="scene-root" style="width:100%;height:100%;"></div>
 <script>
-  // Parse parameters from query string
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode') || 'marker';
   const src = params.get('src') || '';
@@ -21,18 +36,37 @@
   const patternUrl = params.get('patternUrl');
   const width = parseFloat(params.get('width') || '3');
   const height = parseFloat(params.get('height') || '4');
+  const type = params.get('type');
+  const preload = (params.get('preload') || 'true') === 'true';
+  let currentFacing = params.get('facingMode') || 'environment';
 
-  function createEntityForSrc(url, w, h) {
+  function showMessage(text) {
+    let el = document.getElementById('message');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'message';
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+  }
+
+  function createEntityForSrc(url, w, h, forcedType, useAssetId) {
     const lower = url.toLowerCase();
-    if (lower.endsWith('.glb') || lower.endsWith('.gltf')) {
+    const decide = forcedType || (lower.endsWith('.glb') || lower.endsWith('.gltf') ? 'model' : (lower.endsWith('.mp4') || lower.endsWith('.webm') ? 'video' : 'image'));
+
+    if (decide === 'model') {
       const el = document.createElement('a-gltf-model');
-      el.setAttribute('src', url);
+      el.setAttribute(useAssetId ? 'src' : 'src', useAssetId ? '#content-asset' : url);
       el.setAttribute('scale', '1 1 1');
+      el.addEventListener('model-error', () => showMessage('Error al cargar el modelo GLB/GLTF.'));
       return el;
     }
-    if (lower.endsWith('.mp4') || lower.endsWith('.webm')) {
+
+    if (decide === 'video') {
       const el = document.createElement('a-video');
-      el.setAttribute('src', url);
+      el.setAttribute('src', useAssetId ? '#content-asset' : url);
       el.setAttribute('width', w);
       el.setAttribute('height', h);
       el.setAttribute('loop', 'true');
@@ -40,23 +74,94 @@
       el.setAttribute('playsinline', 'true');
       return el;
     }
-    // default image
+
     const img = document.createElement('a-image');
-    img.setAttribute('src', url);
+    img.setAttribute('src', useAssetId ? '#content-asset' : url);
     img.setAttribute('width', w);
     img.setAttribute('height', h);
     return img;
   }
 
-  // Build scene
-  const scene = document.createElement('a-scene');
-  scene.setAttribute('embedded', '');
-  scene.setAttribute('vr-mode-ui', 'enabled: false');
-  scene.setAttribute('renderer', 'logarithmicDepthBuffer: true');
-  scene.setAttribute('arjs', 'trackingMethod: best; sourceType: webcam;');
+  function stopCamera() {
+    const video = document.querySelector('video');
+    if (video && video.srcObject) {
+      try { video.srcObject.getTracks().forEach(t => t.stop()); } catch {}
+    }
+  }
 
-  let anchor;
-  if (mode === 'marker') {
+  function buildAssets(scene, url, forcedType) {
+    if (!preload) return false;
+    const lower = url.toLowerCase();
+    const decide = forcedType || (lower.endsWith('.glb') || lower.endsWith('.gltf') ? 'model' : (lower.endsWith('.mp4') || lower.endsWith('.webm') ? 'video' : 'image'));
+    const assets = document.createElement('a-assets');
+    let asset;
+    if (decide === 'model') {
+      asset = document.createElement('a-asset-item');
+      asset.setAttribute('id', 'content-asset');
+      asset.setAttribute('src', url);
+    } else if (decide === 'video') {
+      asset = document.createElement('video');
+      asset.setAttribute('id', 'content-asset');
+      asset.setAttribute('src', url);
+      asset.setAttribute('autoplay', 'true');
+      asset.setAttribute('muted', 'true');
+      asset.setAttribute('loop', 'true');
+      asset.setAttribute('playsinline', 'true');
+      asset.setAttribute('crossorigin', 'anonymous');
+    } else {
+      asset = document.createElement('img');
+      asset.setAttribute('id', 'content-asset');
+      asset.setAttribute('src', url);
+      asset.setAttribute('crossorigin', 'anonymous');
+    }
+    assets.appendChild(asset);
+    scene.appendChild(assets);
+    return true;
+  }
+
+  function mountScene(facingMode) {
+    const root = document.getElementById('scene-root');
+    const old = root.querySelector('a-scene');
+    if (old) old.remove();
+    stopCamera();
+
+    if (mode === 'image') {
+      if (!patternUrl || !patternUrl.endsWith('.mind')) {
+        showMessage('Falta el archivo .mind para modo imagen.');
+      }
+      const scene = document.createElement('a-scene');
+      scene.setAttribute('embedded', '');
+      scene.setAttribute('vr-mode-ui', 'enabled: false');
+      scene.setAttribute('mindar-image', `imageTargetSrc: ${patternUrl || ''}`);
+
+      const useAsset = buildAssets(scene, src, type);
+      const target = document.createElement('a-entity');
+      target.setAttribute('mindar-image-target', 'targetIndex: 0');
+
+      const entity = createEntityForSrc(src, width, height, type, useAsset);
+      target.appendChild(entity);
+
+      const camera = document.createElement('a-entity');
+      camera.setAttribute('camera', '');
+
+      scene.appendChild(target);
+      scene.appendChild(camera);
+      root.appendChild(scene);
+
+      const toggle = document.getElementById('toggle');
+      if (toggle) toggle.style.display = 'none';
+      return;
+    }
+
+    const scene = document.createElement('a-scene');
+    scene.setAttribute('embedded', '');
+    scene.setAttribute('vr-mode-ui', 'enabled: false');
+    scene.setAttribute('renderer', 'logarithmicDepthBuffer: true');
+    scene.setAttribute('arjs', `trackingMethod: best; sourceType: webcam; facingMode: ${facingMode};`);
+
+    const useAsset = buildAssets(scene, src, type);
+
+    let anchor;
     anchor = document.createElement('a-marker');
     if (patternUrl) {
       anchor.setAttribute('type', 'pattern');
@@ -64,22 +169,28 @@
     } else {
       anchor.setAttribute('preset', markerPreset);
     }
-  } else {
-    // Fallback: use marker mode when unsupported
-    anchor = document.createElement('a-marker');
-    anchor.setAttribute('preset', markerPreset);
+
+    const entity = createEntityForSrc(src, width, height, type, useAsset);
+    anchor.appendChild(entity);
+
+    const camera = document.createElement('a-entity');
+    camera.setAttribute('camera', '');
+
+    scene.appendChild(anchor);
+    scene.appendChild(camera);
+
+    root.appendChild(scene);
+
+    const toggle = document.getElementById('toggle');
+    if (toggle) toggle.style.display = 'block';
   }
 
-  const entity = createEntityForSrc(src, width, height);
-  anchor.appendChild(entity);
+  document.getElementById('toggleCamera').addEventListener('click', () => {
+    currentFacing = currentFacing === 'environment' ? 'user' : 'environment';
+    mountScene(currentFacing);
+  });
 
-  const camera = document.createElement('a-entity');
-  camera.setAttribute('camera', '');
-
-  scene.appendChild(anchor);
-  scene.appendChild(camera);
-
-  document.body.appendChild(scene);
+  mountScene(currentFacing);
 </script>
 </body>
 </html>

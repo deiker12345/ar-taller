@@ -34,14 +34,14 @@ export class ArViewComponent implements OnInit, OnChanges {
       if (!cfg && this.targetId) {
         cfg = await this.supabase.getArConfig(this.targetId);
       }
-      // Fallback: usa preset "hiro" si no hay configuración
       if (!cfg) {
         cfg = {
           mode: 'marker',
           src: '/assets/icon/favicon.png',
           markerPreset: 'hiro',
           width: 3,
-          height: 3
+          height: 3,
+          type: 'image'
         };
       }
       const url = this.buildUrl(cfg);
@@ -60,6 +60,7 @@ export class ArViewComponent implements OnInit, OnChanges {
       height: String(cfg.height ?? 4),
     });
     if (cfg.patternUrl) params.set('patternUrl', cfg.patternUrl);
+    if (cfg.type) params.set('type', cfg.type);
     return `/assets/ar/ar-view.html?${params.toString()}`;
   }
 }

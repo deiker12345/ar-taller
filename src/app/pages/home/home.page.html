@@ -1,53 +1,77 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Home</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>AR Taller</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+      <ion-button color="light" fill="clear" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Cerrar sesión
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="page-background">
   <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Home</ion-title>
+    <ion-toolbar color="primary">
+      <ion-title size="large">AR Taller</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <!-- Pantalla de control (sin cámara) -->
   <ng-container *ngIf="!isArActive">
-    <ion-card class="ion-margin">
+    <section class="hero ion-padding ion-text-center">
+      <h1 class="hero-title title-gradient">Explora Realidad Aumentada</h1>
+      <p class="hero-subtitle">Detecta marcadores, coloca modelos 3D y aplica efectos.</p>
+      <div class="hero-actions">
+        <ion-button color="primary" class="primary-button" (click)="startAr()">Iniciar AR</ion-button>
+      </div>
+    </section>
+
+    <ion-card class="ion-margin elevated-card">
       <ion-card-header>
-        <ion-card-title>Bienvenido</ion-card-title>
-        <ion-card-subtitle>Experiencia de Realidad Aumentada</ion-card-subtitle>
+        <ion-card-title>Selecciona un target</ion-card-title>
+        <ion-card-subtitle>Contenido dinámico desde Supabase</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <p>
-          Esta app usa AR basada en marcadores (Hiro por defecto).
-          Cuando inicies AR, apunta la cámara al marcador para ver el modelo.
-        </p>
-        <ion-button expand="block" color="primary" (click)="startAr()">Iniciar AR</ion-button>
+        <ng-container *ngIf="loadingTargets">
+          <ion-spinner name="dots"></ion-spinner>
+        </ng-container>
+        <ng-container *ngIf="!loadingTargets && targets.length === 0">
+          <p class="muted-text">No hay targets aún. Carga registros en la tabla <code>ar_targets</code>.</p>
+        </ng-container>
+        <ng-container *ngIf="!loadingTargets && targets.length > 0">
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="12" size-md="4" *ngFor="let t of targets">
+                <ion-card class="feature-card elevated-card" (click)="selectTarget(t)">
+                  <ion-card-header>
+                    <div class="feature-icon gradient blue">
+                      <ion-icon name="qr-code-outline"></ion-icon>
+                    </div>
+                    <ion-card-title>{{ t.title || t.id }}</ion-card-title>
+                    <ion-card-subtitle>{{ t.mode | titlecase }} · {{ t.type }}</ion-card-subtitle>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <img *ngIf="t.type === 'image' && t.src" [src]="t.src" [alt]="t.title || t.id" style="width:100%; border-radius:12px;" />
+                    <ng-container *ngIf="!(t.type === 'image' && t.src)">
+                      <ion-text class="muted-text">Sin imagen disponible</ion-text>
+                    </ng-container>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ng-container>
       </ion-card-content>
     </ion-card>
-
-    <!-- Ejemplo opcional de captura de foto, sin interferir con AR -->
-    <!--
-    <ion-button expand="block" class="ion-margin" (click)="openCamera()">Abrir cámara</ion-button>
-    <ion-img *ngIf="previewImage" [src]="previewImage" class="ion-margin"></ion-img>
-    -->
   </ng-container>
 
-  <!-- Modo AR -->
   <ng-container *ngIf="isArActive">
-    <!-- Mensaje profesional -->
-    <ion-note color="light" class="ion-padding">
+    <ion-note color="light" class="ar-note ion-padding">
       {{ arInstruction }}
     </ion-note>
 
-    <!-- Vista AR dinámica -->
-    <app-ar-view [targetId]="currentTargetId"></app-ar-view>
+    <app-ar-view [targetId]="currentTargetId" [config]="selectedTargetConfig"></app-ar-view>
 
-    <!-- Botón flotante para salir del modo AR -->
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
       <ion-fab-button color="medium" (click)="stopAr()">
         <ion-icon name="close"></ion-icon>

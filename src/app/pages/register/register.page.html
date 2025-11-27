@@ -1,46 +1,63 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Registro</ion-title>
+    <ion-title>AR Taller</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding page-background">
+  <div class="centered-container">
+    <ion-card class="elevated-card auth-card">
+      <ion-card-header>
+        <ion-card-title>Crear cuenta AR</ion-card-title>
+        <ion-card-subtitle>Únete para comenzar</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="register()">
+          <ion-item class="form-item">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input type="text" [(ngModel)]="user.nombre" name="nombre" required></ion-input>
+          </ion-item>
 
-  <form (ngSubmit)="register()">
+          <ion-item class="form-item">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-input type="email" [(ngModel)]="user.correo" name="correo" required></ion-input>
+          </ion-item>
 
-    <!-- Nombre -->
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input type="text" [(ngModel)]="user.nombre" name="nombre" required>
-      </ion-input>
-    </ion-item>
+          <ion-item class="form-item">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input type="password" [(ngModel)]="user.contrasena" name="contrasena" required></ion-input>
+          </ion-item>
 
-    <!-- Correo -->
-    <ion-item>
-      <ion-label position="floating">Correo electrónico</ion-label>
-      <ion-input type="email" [(ngModel)]="user.correo" name="correo" required>
-      </ion-input>
-    </ion-item>
+          <ion-button expand="block" type="submit" class="primary-button ion-margin-top">
+            Registrarse
+          </ion-button>
 
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" [(ngModel)]="user.contrasena" name="contrasena" required>
-      </ion-input>
-    </ion-item>
+          <div class="ion-text-center ion-margin-top">
+            <p class="muted-text">¿Ya tienes cuenta?</p>
+            <ion-button fill="clear" size="small" (click)="goLogin()">
+              Iniciar sesión
+            </ion-button>
+          </div>
 
-
-    <ion-button expand="block" type="submit" class="ion-margin-top">
-      Registrarse
-    </ion-button>
-
-    <div class="ion-text-center ion-margin-top">
-      <p>¿Ya tienes cuenta?</p>
-      <ion-button fill="clear" size="small" (click)="goLogin()">
-        Iniciar sesión
-      </ion-button>
-    </div>
-
-
-  </form>
-
+          <div class="ion-margin-top ion-text-center">
+            <ion-chip color="primary" outline="true">
+              <ion-icon name="scan-outline"></ion-icon>
+              <ion-label>Marcadores</ion-label>
+            </ion-chip>
+            <ion-chip color="tertiary" outline="true">
+              <ion-icon name="cube-outline"></ion-icon>
+              <ion-label>Modelos 3D</ion-label>
+            </ion-chip>
+            <ion-chip color="secondary" outline="true">
+              <ion-icon name="sparkles-outline"></ion-icon>
+              <ion-label>Efectos</ion-label>
+            </ion-chip>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

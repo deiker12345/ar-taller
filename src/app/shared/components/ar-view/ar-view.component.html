@@ -1,9 +1,25 @@
-<div class="ar-container">
-  <ng-container *ngIf="loading">
-    <ion-spinner name="dots"></ion-spinner>
-  </ng-container>
+<div class="ar-wrapper">
+  <div class="ar-ui">
+    <ion-chip color="success" outline="true">
+      <ion-icon name="radio-outline"></ion-icon>
+      <ion-label>AR activo</ion-label>
+    </ion-chip>
+    <ion-chip color="primary" outline="true">
+      <ion-icon name="scan-outline"></ion-icon>
+      <ion-label>Marcador: {{ (config?.markerPreset || 'hiro') | titlecase }}</ion-label>
+    </ion-chip>
+  </div>
 
-  <ng-container *ngIf="!loading && iframeSrc">
-    <iframe class="ar-frame" [src]="iframeSrc" allow="camera; microphone" title="AR View"></iframe>
-  </ng-container>
+  <div class="ar-container">
+    <ng-container *ngIf="loading">
+      <div class="loading-overlay">
+        <ion-spinner name="dots"></ion-spinner>
+        <span class="loading-text">Inicializando cámara…</span>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!loading && iframeSrc">
+      <iframe class="ar-frame" [src]="iframeSrc" allow="camera; microphone" title="AR View"></iframe>
+    </ng-container>
+  </div>
 </div>

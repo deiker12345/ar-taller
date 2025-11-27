@@ -1,0 +1,8 @@
+.form-item { --background: var(--surface); --color: var(--text-primary); --highlight-color-focused: var(--ion-color-primary); --padding-start: 8px; --inner-padding-end: 8px; --border-radius: var(--radius-md); }
+.form-item ion-label { color: var(--text-primary); }
+.form-item ion-input::part(native) { color: var(--text-primary); }
+.form-item ion-input::part(placeholder) { color: var(--text-secondary); }
+.form-item ion-icon { color: var(--ion-color-primary); }
+ion-card.elevated-card { --inner-padding: 12px; border-radius: var(--radius-md); box-shadow: 0 12px 24px rgba(0,0,0,0.18); border: 1px solid var(--border-color); }
+ion-card-title { font-weight: 700; }
+.primary-button { border-radius: var(--radius-lg); height: 52px; font-weight: 600; }

@@ -1,3 +1,7 @@
 :host { display: block; }
+.ar-wrapper { position: relative; height: 100vh; border-radius: 16px; overflow: hidden; background: #0A0A0A; }
+.ar-ui { position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; z-index: 2; }
 .ar-container { display: flex; align-items: center; justify-content: center; height: 100%; }
-.ar-frame { width: 100%; height: 100vh; border: 0; }
+.loading-overlay { position: absolute; inset: 0; display: grid; place-items: center; color: #FFFFFF; background: rgba(0,0,0,0.35); }
+.loading-text { margin-top: 8px; font-size: 14px; color: #FFFFFF; }
+.ar-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }

@@ -1,37 +1,57 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Iniciar Sesión</ion-title>
+    <ion-title>AR Taller</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding page-background">
+  <div class="centered-container">
+    <ion-card class="elevated-card auth-card">
+      <ion-card-header>
+        <ion-card-title>Realidad Aumentada</ion-card-title>
+        <ion-card-subtitle>Accede para continuar</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="login()">
+          <ion-item class="form-item">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-input type="email" [(ngModel)]="correo" name="correo" required></ion-input>
+          </ion-item>
 
-  <form (ngSubmit)="login()">
+          <ion-item class="form-item">
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input type="password" [(ngModel)]="contrasena" name="contrasena" required></ion-input>
+          </ion-item>
 
+          <ion-button expand="block" class="primary-button ion-margin-top" type="submit">
+            Iniciar sesión
+          </ion-button>
+        </form>
 
-    <ion-item>
-      <ion-label position="floating">Correo electrónico</ion-label>
-      <ion-input type="email" [(ngModel)]="correo" name="correo" required>
-      </ion-input>
-    </ion-item>
+        <div class="ion-text-center ion-margin-top">
+          <p class="muted-text">¿No tienes cuenta?</p>
+          <ion-button fill="clear" size="small" (click)="goRegister()">
+            Crear una cuenta
+          </ion-button>
+        </div>
 
-    <ion-item>
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" [(ngModel)]="contrasena" name="contrasena" required>
-      </ion-input>
-    </ion-item>
-
-
-    <ion-button expand="block" class="ion-margin-top" type="submit">
-      Iniciar sesión
-    </ion-button>
-  </form>
-
-  <div class="ion-text-center ion-margin-top">
-    <p>¿No tienes cuenta?</p>
-    <ion-button fill="clear" size="small" (click)="goRegister()">
-      Crear una cuenta
-    </ion-button>
+        <div class="ion-margin-top ion-text-center">
+          <ion-chip color="primary" outline="true">
+            <ion-icon name="scan-outline"></ion-icon>
+            <ion-label>Marcadores</ion-label>
+          </ion-chip>
+          <ion-chip color="tertiary" outline="true">
+            <ion-icon name="cube-outline"></ion-icon>
+            <ion-label>Modelos 3D</ion-label>
+          </ion-chip>
+          <ion-chip color="secondary" outline="true">
+            <ion-icon name="sparkles-outline"></ion-icon>
+            <ion-label>Efectos</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
-
 </ion-content>

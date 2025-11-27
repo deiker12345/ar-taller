@@ -32,8 +32,6 @@ export class AuthService {
       }
     );
 
-    // Importante: Firebase autentica automáticamente al crear usuario.
-    // Para permitir que el GuestGuard deje pasar a /login, cerramos sesión.
     await signOut(this.auth);
 
     return cred;
